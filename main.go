@@ -29,10 +29,18 @@ func main() {
 		Help:    "Port to use",
 	})
 
+	debug := parser.Flag("d", "debug", &argparse.Options{
+		Help: "Gin in debug mode",
+	})
+
 	err := parser.Parse(os.Args)
 	if err != nil {
 		fmt.Print(parser.Usage(err))
 		os.Exit(1)
+	}
+
+	if !*debug {
+		gin.SetMode(gin.ReleaseMode)
 	}
 
 	r := gin.Default()
@@ -71,6 +79,8 @@ func main() {
 
 		})
 	}
+
+	fmt.Printf("Serving on: 127.0.0.1:%d\n", *port)
 
 	r.Run(fmt.Sprintf(":%d", *port))
 
