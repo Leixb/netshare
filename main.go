@@ -82,6 +82,10 @@ func main() {
 
 	fmt.Printf("Serving on: 127.0.0.1:%d\n", *port)
 
-	r.Run(fmt.Sprintf(":%d", *port))
+	err = r.Run(fmt.Sprintf(":%d", *port))
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 }
