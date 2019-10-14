@@ -12,7 +12,8 @@ script:
   - diff -u <(echo -n) <(gofmt -d .)
   - go vet $(go list ./... | grep -v /vendor/)
   - go test -v -race ./...
-  - gox -os="linux darwin windows" -arch="amd64" -output="netshare.{{.OS}}.{{.Arch}}" -ldflags "-X main.Rev=`git rev-parse --short HEAD`" -verbose ./...
+    # Only run gox on tagged commits
+  -  if [ -n "$TRAVIS_TAG" ]; then gox -os="linux darwin windows" -arch="amd64" -output="netshare.{{.OS}}.{{.Arch}}" -ldflags "-X main.Rev=`git rev-parse --short HEAD`" -verbose ./... ; fi
 
 deploy:
   provider: releases
