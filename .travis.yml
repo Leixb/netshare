@@ -1,1 +1,28 @@
 language: go
+sudo: false
+
+before_install:
+  - go get github.com/mitchellh/gox
+
+install:
+  - # skip
+
+script:
+  - go get -t -v ./...
+  - diff -u <(echo -n) <(gofmt -d .)
+  - go vet $(go list ./... | grep -v /vendor/)
+  - go test -v -race ./...
+  - gox -os="linux darwin windows" -arch="amd64" -output="netshare.{{.OS}}.{{.Arch}}" -ldflags "-X main.Rev=`git rev-parse --short HEAD`" -verbose ./...
+
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: R2+HlA5D0xgPM7RlfsuXoFvF1KetTjSpwf+bxZeA3fyLG5vHTDEbLNUs75ot5KrnGPlSgRM0GUkvYWBlGGK4kUSxaP2Ao6liRqiKyMGx0fH+ITp0WjkoVNiWZiRpcFGBIEiIYTtc8hQOBIhjv0xBvVpH7e4Nly4xN1H5RHkxg5rRbCNS23yZ/n2CdU4kV4PijpLyunHVPhvJ1c1tsUMnBDzelR03oAboo+WheDmF1Nrw3SfqawcmyKzVONRivmMhNsJa9T2UNAS/8Xv1BCJYd/r76rSnTMuVSBjbV9hSkTGdXLHgwAKCCidcCL6Ii+s6Y4fR90V3pY4lkMbXkDoBBKJ+dbZDI75YAh4SVPw2McKYh5A8/ChyvbsCiiLMiWSXkoL+HtgJ1qpmel4+MNe8L2XwDHZ8tXUqzEztICO8jlM8KaWod9wxKf/3B4Y26KCLsZS4GTPVqnEHVzR3AFKMftmmWiRMNoQIyV9OBUoa3/Fso+N2iKAFotWpQPfrLzxVPtfxlXV5sSv7tW5fVrX1+IpWbblWEmnmTflmI6GDsdOVDyNatqYcvxnoSy/zVP7Rla1QznOydKjNhZUrwXq0c0UO+3DMXq+pJSMan13w1ElWBKveyuSGo2c1L/DCFsQNtglFUvp8VcvqL5ihkQ6MbiVO6yU+kfzBk01lw/ZnqkU=
+  file:
+    - netshare.windows.amd64.exe
+    - netshare.darwin.amd64
+    - netshare.linux.amd64
+  on:
+    repo: Leixb/netshare
+    tags: true
