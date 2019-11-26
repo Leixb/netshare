@@ -2,13 +2,11 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
 	"os"
 	"path/filepath"
 
 	"github.com/akamensky/argparse"
-	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
@@ -45,19 +43,16 @@ func main() {
 
 	r := gin.Default()
 
-	r.Use(static.Serve("/", static.LocalFile(*folder, true)))
-
 	if *allowUpload {
 
-		r.SetHTMLTemplate(
-			template.Must(template.New("upload").Parse(`<html><head><title>Upload File</title></head>
-<body><form enctype="multipart/form-data" action="#" method="POST">
-  	<input type="file" name="file"/>
-	<input type="submit" value="upload"/>
-</form></body></html> `)))
+		r.StaticFS("/browse", http.Dir(*folder))
+
+		r.GET("/", func(c *gin.Context) {
+			c.Data(http.StatusOK, "text/html", []byte(frame))
+		})
 
 		r.GET("/upload", func(c *gin.Context) {
-			c.HTML(http.StatusOK, "upload", gin.H{})
+			c.Data(http.StatusOK, "text/html", []byte(upload))
 		})
 		r.POST("/upload", func(c *gin.Context) {
 
@@ -78,6 +73,8 @@ func main() {
 			c.String(http.StatusOK, fmt.Sprintf("Uploaded %s", filename))
 
 		})
+	} else {
+		r.StaticFS("/", http.Dir(*folder))
 	}
 
 	fmt.Printf("Serving on: 127.0.0.1:%d\n", *port)
