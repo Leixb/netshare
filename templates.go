@@ -1,7 +1,6 @@
 package main
 
-var upload =
-`<html>
+var upload = `<html>
 	<head>
 		<title>Upload File</title>
 	</head>
@@ -13,8 +12,7 @@ var upload =
 	</body>
 </html> `
 
-var frame = 
-`<html>
+var frame = `<html>
 	<head>
 		<title>NetShare</title>
 	</head>

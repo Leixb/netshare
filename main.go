@@ -45,7 +45,6 @@ func main() {
 	r := gin.Default()
 
 	if *allowUpload {
-
 		r.StaticFS("/browse", http.Dir(*folder))
 
 		r.GET("/", func(c *gin.Context) {
@@ -56,10 +55,10 @@ func main() {
 			c.Data(http.StatusOK, "text/html", []byte(upload))
 		})
 		r.POST("/upload", func(c *gin.Context) {
-
 			file, err := c.FormFile("file")
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{"error": err})
+
 				return
 			}
 
@@ -67,12 +66,12 @@ func main() {
 
 			if err := c.SaveUploadedFile(file, filename); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{"error": err})
+
 				return
 			}
 
 			fmt.Printf("uploaded file: %s\n", filename)
 			c.String(http.StatusOK, fmt.Sprintf("Uploaded %s", filename))
-
 		})
 	} else {
 		r.StaticFS("/", http.Dir(*folder))
@@ -85,5 +84,4 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-
 }
