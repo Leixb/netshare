@@ -10,8 +10,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func main() {
+const defaultPort = 8080
 
+func main() {
 	parser := argparse.NewParser("", "Share folder on local network")
 
 	allowUpload := parser.Flag("u", "upload", &argparse.Options{
@@ -23,7 +24,7 @@ func main() {
 	})
 
 	port := parser.Int("p", "port", &argparse.Options{
-		Default: 8080,
+		Default: defaultPort,
 		Help:    "Port to use",
 	})
 
